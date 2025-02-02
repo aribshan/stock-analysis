@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 import pandas as pd
 
 def plot_stock_prices(data, ticker):
-    fig = go.Figure(data=[go.Candlestick(x=data.index,
+    fig = go.Figure(data=[go.Candlestick(x=data['Date'],
                     open=data['Open'], high=data['High'],
                     low=data['Low'], close=data['Close'])
                     ])
