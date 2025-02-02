@@ -12,7 +12,7 @@ def plot_stock_prices(data, ticker):
         font=dict(size=12, color='#9999dd'),
         yaxis=dict(
             title=dict(
-                text=f"{ticker} stock price"
+                text=f"{ticker} stock price (USD)"
             )
         ),
         xaxis=dict(
