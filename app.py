@@ -1,7 +1,7 @@
 import streamlit as st
 from data.fetch_data import fetch_stock_data, read_data, fetch_all_stock_data
-from data.process_data import get_holdings
-from utils.visualizations import plot_stock_prices
+from data.process_data import get_holdings, calculate_portfolio_values
+from utils.visualizations import plot_stock_prices, plot_portfolio_value
 
 st.set_page_config(
     layout="wide"
@@ -28,16 +28,16 @@ st.markdown(
 
 option = st.sidebar.selectbox("Choose a feature", ["Home", "Stock Search", "Compare Stocks", "Upload Portfolio", "My Portfolio"])
 
-if 'stock_data' not in st.session_state:
-    st.session_state.stock_data = {}
+if 'holdings' not in st.session_state:
+    st.session_state.holdings = {}
 
 if option == "Home":
-    st.write("### Market Overview")
+    st.write("## Market Overview")
 
 elif option == "Stock Search":
     ticker = st.text_input("Enter stock ticker:", "AAPL")
 
-    if st.button("### Fetch Data"):
+    if st.button("## Fetch Data"):
         try:
             data = fetch_stock_data(ticker)
             st.write("Data fetched sucessfully")
@@ -47,31 +47,38 @@ elif option == "Stock Search":
             st.write("Error fecthing data")
 
 elif option == "Compare Stocks":
-    st.write("### Compare Stocks")
+    st.write("## Compare Stocks")
 
 elif option == "Upload Portfolio":
-    st.write("### Upload Portfolio")
+    st.write("## Upload Portfolio")
 
     uploaded_file = st.file_uploader("Upload your portfolio file (CSV, Excel, or JSON)", type=["csv", "xlsx", "json"])
 
     if uploaded_file is not None:
         portfolio_data = read_data(uploaded_file)
-        st.write("Please wait.")
 
         if portfolio_data is not None:
             holdings = get_holdings(portfolio_data)
-            stock_data = fetch_all_stock_data(holdings)
-
-            st.session_state.stock_data = stock_data
+            # stock_data = fetch_all_stock_data(holdings)
+            
+            st.session_state.holdings = holdings
+            # st.session_state.stock_data = stock_data
             st.write("Data Saved")
             # st.write("Updated stock data:", st.session_state.stock_data)
 
 elif option == "My Portfolio":
-    st.write("### My Portfolio")
+    st.write("## My Portfolio")
 
-    stock_data = st.session_state.stock_data
+    portfolio_value = calculate_portfolio_values(st.session_state.holdings)
+    # st.write(portfolio_value)
+
+    plot = plot_portfolio_value(portfolio_value, "Market Value")
+    st.plotly_chart(plot, use_container_width=True)
+
+    stock_data = fetch_all_stock_data(st.session_state.holdings)
 
     if stock_data:
+        st.write("#### My Stock Trends")
         container = st.container()
 
         num_columns = 2

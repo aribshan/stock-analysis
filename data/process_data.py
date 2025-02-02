@@ -1,4 +1,5 @@
 import pandas as pd
+import yfinance as yf
 
 def get_holdings(data):
     holdings_columns = {"Ticker Symbol", "Total Holdings", "Average Buy Price"}
@@ -25,3 +26,22 @@ def get_holdings(data):
     holdings = holdings.drop(columns=["Total_Cost"])
 
     return holdings
+
+def calculate_portfolio_values(holdings):
+    portfolio_values = holdings.copy()
+
+    portfolio_values["Total Invested"] = portfolio_values["Total Holdings"] * portfolio_values["Average Buy Price"]
+    
+    def get_current_price(ticker):
+        try:
+            stock = yf.Ticker(ticker)
+            return stock.history(period="1d")["Close"].iloc[-1]
+        except Exception as e:
+            print(f"Error fetching data for {ticker}: {e}")
+            return None
+
+    portfolio_values["Current Price"] = portfolio_values["Ticker Symbol"].apply(get_current_price)
+
+    portfolio_values["Current Value"] = portfolio_values["Total Holdings"] * portfolio_values["Current Price"]
+
+    return portfolio_values

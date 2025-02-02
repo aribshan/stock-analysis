@@ -1,5 +1,6 @@
 import plotly.graph_objects as go
 import pandas as pd
+import plotly.express as px
 
 def plot_stock_prices(data, ticker):
     fig = go.Figure(data=[go.Candlestick(x=data['Date'],
@@ -22,5 +23,17 @@ def plot_stock_prices(data, ticker):
         ),
         template='plotly_dark'
     )
+
+    return fig
+
+def plot_portfolio_value(data, values):
+    fig = px.pie(data, values=values, names='Ticker Symbol', color_discrete_sequence=["#00296d", "#2e89c1", "#66fffa"])
+
+    fig.update_layout(
+        font=dict(size=12, color='#9999dd'),
+        template='plotly_dark'
+    )
+
+    fig.layout.showlegend = True
 
     return fig
