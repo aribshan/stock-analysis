@@ -1,7 +1,7 @@
 import streamlit as st
-from data.fetch_data import fetch_stock_data, read_data, fetch_all_stock_data
+from data.fetch_data import fetch_stock_data, read_data, fetch_all_stock_data, get_market_indices, get_top_gainers_losers
 from data.process_data import get_holdings, calculate_portfolio_values
-from utils.visualizations import plot_stock_prices, plot_portfolio_value
+from utils.visualizations import plot_stock_prices, plot_portfolio_value, create_heatmap
 
 st.set_page_config(
     layout="wide"
@@ -33,6 +33,45 @@ if 'holdings' not in st.session_state:
 
 if option == "Home":
     st.write("## Market Overview")
+
+    st.subheader("Major Indices")
+    index_data = get_market_indices()
+
+    index_data_dict = index_data.set_index('Index').to_dict(orient='index')
+
+    col1, col2, col3 = st.columns(3)
+
+    for i, (name, data) in enumerate(index_data_dict.items()):
+        col = [col1, col2, col3][i % 3]
+
+        if data['Change (%)'] > 0:
+            change_color = "normal"
+        elif data['Change (%)'] < 0:
+            change_color = "normal"
+        else:
+            change_color = "off"
+
+        col.metric(
+            label=name, 
+            value=f"${data['Current Price']:.2f}", 
+            delta=f"{data['Change (%)']:.2f}", 
+            delta_color=change_color
+        )
+
+    gainers, losers = get_top_gainers_losers()
+
+    if gainers is not None and losers is not None:
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.write("### 📊 Top Gainers")
+            st.dataframe(gainers.set_index("Ticker"))
+        
+        with col2:
+            st.write("### 📉 Top Losers")
+            st.dataframe(losers.set_index("Ticker"))
+    else:
+        st.warning("Could not fetch top gainers and losers.")
 
 elif option == "Stock Search":
     ticker = st.text_input("Enter stock ticker:", "AAPL")

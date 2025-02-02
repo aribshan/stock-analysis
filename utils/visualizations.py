@@ -31,9 +31,24 @@ def plot_portfolio_value(data, values):
 
     fig.update_layout(
         font=dict(size=12, color='#9999dd'),
-        template='plotly_dark'
+        template='plotly_dark',
     )
 
     fig.layout.showlegend = True
 
+    return fig
+
+def create_heatmap():
+    sectors = ["Tech", "Healthcare", "Energy", "Finance"]
+    performance = [2.5, -1.2, 0.5, -0.8]
+
+    fig = go.Figure(data=go.Heatmap(
+        z=performance,
+        x=sectors,
+        y=["Performance"],
+        colorscale="RdYlGn",
+        showscale=True
+    ))
+    
+    fig.update_layout(title="Stock Market Sector Performance", height=300)
     return fig
