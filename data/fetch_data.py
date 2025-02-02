@@ -75,6 +75,7 @@ def get_top_gainers_losers():
     df_sorted = df.sort_values(by="Change (%)", ascending=False)
     top_gainers = df_sorted.head(5)
     top_losers = df_sorted.tail(5)
+    top_losers = top_losers.iloc[::-1]
 
     return top_gainers, top_losers
 
