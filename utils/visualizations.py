@@ -27,7 +27,7 @@ def plot_stock_prices(data, ticker):
     return fig
 
 def plot_portfolio_value(data, values):
-    fig = px.pie(data, values=values, names='Ticker Symbol', color_discrete_sequence=["#00296d", "#2e89c1", "#66fffa"])
+    fig = px.pie(data, values=values, names='Ticker Symbol', color_discrete_sequence=["#00296d", "#2e89c1", "#66fffa"], title="Portfolio Value Distribution")
 
     fig.update_layout(
         font=dict(size=12, color='#9999dd'),
