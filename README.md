@@ -3,12 +3,12 @@
 
  Hosted Link:
 
- ## Home Page
+ ### Home Page
 
- ## Stock Search
+ ### Stock Search
 
- ## Compare Stock
+ ### Compare Stock
 
- ## Upload Portfolio
+ ### Upload Portfolio
 
- ## My Portfolio
+ ### My Portfolio
