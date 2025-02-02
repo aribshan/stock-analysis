@@ -1,5 +1,5 @@
 import streamlit as st
-from data.fetch_data import fetch_stock_data
+from data.fetch_data import fetch_stock_data, read_data
 from utils.visualizations import plot_stock_prices
 
 option = st.sidebar.selectbox("Choose a feature", ["Home", "Stock Search", "Compare Stocks", "Portfolio"])
@@ -23,4 +23,4 @@ elif option == "Compare Stocks":
     st.write("Compare Stocks")
 
 elif option == "Portfolio":
-    st.write("Portfolio Analysis")
+    portfolio_data = read_data()

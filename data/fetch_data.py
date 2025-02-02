@@ -1,5 +1,7 @@
 import yfinance as yf
 import pandas as pd
+import streamlit as st
+import json
 
 def fetch_stock_data(ticker):
     stock = yf.Ticker(ticker)
@@ -18,3 +20,29 @@ def fetch_stock_data(ticker):
     }
     
     return data
+
+def read_data():
+    uploaded_file = st.file_uploader("Upload your portfolio file (CSV, Excel, or JSON)", type=["csv", "xlsx", "json"])
+
+    if uploaded_file is not None:
+        file_type = uploaded_file.name.split(".")[-1].lower()
+
+        if file_type == "csv":
+            df = pd.read_csv(uploaded_file)
+            st.success("CSV file uploaded successfully!")
+        elif file_type == "xlsx":
+            df = pd.read_excel(uploaded_file)
+            st.success("Excel file uploaded successfully!")
+        elif file_type == "json":
+            data = json.load(uploaded_file)
+            df = pd.DataFrame(data)
+            st.success("JSON file uploaded successfully!")
+        else:
+            st.error("Unsupported file format. Please upload a CSV, Excel, or JSON file.")
+            df = None
+
+        if df is not None:
+            st.write("### Portfolio Data Preview:")
+            st.dataframe(df)
+
+            st.download_button("Download Processed Data", df.to_csv(index=False), "portfolio_processed.csv", "text/csv")
