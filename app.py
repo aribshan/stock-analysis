@@ -87,6 +87,39 @@ elif option == "Stock Search":
 
 elif option == "Compare Stocks":
     st.write("## Compare Stocks")
+    container = st.container()
+
+    num_columns = 2
+    columns = container.columns([2, 2])
+
+    ticker1 = columns[0].text_input("Enter stock ticker 1:", "AAPL", key="ticker1")
+    ticker2 = columns[1].text_input("Enter stock ticker 2:", "MSFT", key="ticker2")
+
+    if st.button("Fetch Data"):
+        try:
+            st.session_state["data1"] = fetch_stock_data(ticker1)
+            st.session_state["plot1"] = plot_stock_prices(st.session_state["data1"]['Historical Prices'], ticker1)
+        except:
+            st.session_state["data1"] = None
+            st.session_state["plot1"] = None
+            columns[0].write("Error fetching data")
+
+        try:
+            st.session_state["data2"] = fetch_stock_data(ticker2)
+            st.session_state["plot2"] = plot_stock_prices(st.session_state["data2"]['Historical Prices'], ticker2)
+        except:
+            st.session_state["data2"] = None
+            st.session_state["plot2"] = None
+            columns[1].write("Error fetching data")
+
+    if "plot1" in st.session_state and st.session_state["plot1"]:
+        columns[0].write("Data fetched successfully")
+        columns[0].plotly_chart(st.session_state["plot1"], use_container_width=True)
+
+    if "plot2" in st.session_state and st.session_state["plot2"]:
+        columns[1].write("Data fetched successfully")
+        columns[1].plotly_chart(st.session_state["plot2"], use_container_width=True)
+
 
 elif option == "Upload Portfolio":
     st.write("## Upload Portfolio")
@@ -108,26 +141,29 @@ elif option == "Upload Portfolio":
 elif option == "My Portfolio":
     st.write("## My Portfolio")
 
-    portfolio_value = calculate_portfolio_values(st.session_state.holdings)
-    # st.write(portfolio_value)
+    if len(st.session_state.holdings):
+        portfolio_value = calculate_portfolio_values(st.session_state.holdings)
+        # st.write(portfolio_value)
 
-    plot = plot_portfolio_value(portfolio_value, "Market Value")
-    st.plotly_chart(plot, use_container_width=True)
+        plot = plot_portfolio_value(portfolio_value, "Market Value")
+        st.plotly_chart(plot, use_container_width=True)
 
-    stock_data = fetch_all_stock_data(st.session_state.holdings)
+        stock_data = fetch_all_stock_data(st.session_state.holdings)
 
-    if stock_data:
-        st.write("#### My Stock Trends")
-        container = st.container()
+        if stock_data:
+            st.write("#### My Stock Trends")
+            container = st.container()
 
-        num_columns = 2
-        columns = container.columns([2, 2])
+            num_columns = 2
+            columns = container.columns([2, 2])
 
-        for idx, ticker in enumerate(stock_data):
-            col_idx = idx % num_columns
-            plot = plot_stock_prices(stock_data[ticker]['Historical Prices'], ticker)
+            for idx, ticker in enumerate(stock_data):
+                col_idx = idx % num_columns
+                plot = plot_stock_prices(stock_data[ticker]['Historical Prices'], ticker)
 
-            columns[col_idx].plotly_chart(plot, use_container_width=True)
-    
+                columns[col_idx].plotly_chart(plot, use_container_width=True)
+        
+        else:
+            st.write("No stock data available.")
     else:
-        st.write("No stock data available.")
+        st.write("Please upload a portfolio first on the portfolio tab")
