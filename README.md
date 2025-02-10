@@ -1,7 +1,7 @@
 # stock-analysis
  Application for stock analysis and portfolio management
 
- Hosted Link:
+ Hosted Link: [Here](https://stock-analysis-arib.streamlit.app/)
 
  ### Home Page
 
